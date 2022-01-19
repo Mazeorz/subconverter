@@ -66,7 +66,6 @@ void vlessConstruct(Proxy &node, const std::string &group, const std::string &re
     node.UserId = id.empty() ? "00000000-0000-0000-0000-000000000000" : id;
     node.TransferProtocol = net.empty() ? "tcp" : net;
     node.Host = host.empty() ? add.data() : trim(host);
-    node.FakeType = type;
     node.TLSSecure = true;
     node.Flow = flow;
 }
