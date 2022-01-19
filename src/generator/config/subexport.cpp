@@ -126,7 +126,7 @@ bool applyMatcher(const std::string &rule, std::string &real_rule, const Proxy &
     std::string target, ret_real_rule;
     static const std::string groupid_regex = R"(^!!(?:GROUPID|INSERT)=([\d\-+!,]+)(?:!!(.*))?$)", group_regex = R"(^!!(?:GROUP)=(.+?)(?:!!(.*))?$)";
     static const std::string type_regex = R"(^!!(?:TYPE)=(.+?)(?:!!(.*))?$)", port_regex = R"(^!!(?:PORT)=(.+?)(?:!!(.*))?$)", server_regex = R"(^!!(?:SERVER)=(.+?)(?:!!(.*))?$)";
-    static const string_array types = {"", "SS", "SSR", "VMESS", "TROJAN", "SNELL", "HTTP", "HTTPS", "SOCKS5"};
+    static const string_array types = {"", "SS", "SSR", "VMESS", "VLESS", "TROJAN", "SNELL", "HTTP", "HTTPS", "SOCKS5"};
     if(startsWith(rule, "!!GROUP="))
     {
         regGetMatch(rule, group_regex, 3, 0, &target, &ret_real_rule);
@@ -345,6 +345,60 @@ void proxyToClash(std::vector<Proxy> &nodes, YAML::Node &yamlnode, const ProxyGr
                 break;
             default:
                 continue;
+            }
+            break;
+        case ProxyType::Vless:
+            singleproxy["type"] = "vless";
+            singleproxy["uuid"] = x.UserId;
+            singleproxy["tls"] = x.TLSSecure;
+            singleproxy["flow"] = x.Flow;
+            if(!scv.is_undef())
+                singleproxy["skip-cert-verify"] = scv.get();
+            switch(hash_(x.TransferProtocol))
+            {
+                case "tcp"_hash:
+                    break;
+                case "ws"_hash:
+                    singleproxy["network"] = x.TransferProtocol;
+                    if(ext.clash_new_field_name)
+                    {
+                        singleproxy["ws-opts"]["path"] = x.Path;
+                        if(!x.Host.empty())
+                            singleproxy["ws-opts"]["headers"]["Host"] = x.Host;
+                        if(!x.Edge.empty())
+                            singleproxy["ws-opts"]["headers"]["Edge"] = x.Edge;
+                    }
+                    else
+                    {
+                        singleproxy["ws-path"] = x.Path;
+                        if(!x.Host.empty())
+                            singleproxy["ws-headers"]["Host"] = x.Host;
+                        if(!x.Edge.empty())
+                            singleproxy["ws-headers"]["Edge"] = x.Edge;
+                    }
+                    break;
+                case "http"_hash:
+                    singleproxy["network"] = x.TransferProtocol;
+                    singleproxy["http-opts"]["method"] = "GET";
+                    singleproxy["http-opts"]["path"].push_back(x.Path);
+                    if(!x.Host.empty())
+                        singleproxy["http-opts"]["headers"]["Host"].push_back(x.Host);
+                    if(!x.Edge.empty())
+                        singleproxy["http-opts"]["headers"]["Edge"].push_back(x.Edge);
+                    break;
+                case "h2"_hash:
+                    singleproxy["network"] = x.TransferProtocol;
+                    singleproxy["h2-opts"]["path"] = x.Path;
+                    if(!x.Host.empty())
+                        singleproxy["h2-opts"]["host"].push_back(x.Host);
+                    break;
+                case "grpc"_hash:
+                    singleproxy["network"] = x.TransferProtocol;
+                    singleproxy["servername"] = x.Host;
+                    singleproxy["grpc-opts"]["grpc-service-name"] = x.Path;
+                    break;
+                default:
+                    continue;
             }
             break;
         case ProxyType::ShadowsocksR:
