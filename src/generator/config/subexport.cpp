@@ -351,10 +351,10 @@ void proxyToClash(std::vector<Proxy> &nodes, YAML::Node &yamlnode, const ProxyGr
             singleproxy["type"] = "vless";
             singleproxy["uuid"] = x.UserId;
             singleproxy["tls"] = x.TLSSecure;
-            if (x.Flow != ""){
+            if (!x.Flow.empty())
                 singleproxy["flow"] = x.Flow;
+            if (!x.Sni.empty())
                 singleproxy["servername"] = x.Sni;
-            }
             if(!scv.is_undef())
                 singleproxy["skip-cert-verify"] = scv.get();
             switch(hash_(x.TransferProtocol))
