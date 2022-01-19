@@ -14,7 +14,6 @@ enum ProxyType
     ShadowsocksR,
     Vless,
     VMess,
-    Vless,
     Trojan,
     Snell,
     HTTP,
@@ -79,7 +78,6 @@ struct Proxy
     String Host;
     String Path;
     String Edge;
-    String Flow;
 
     String QUICSecure;
     String QUICSecret;
