@@ -1189,10 +1189,10 @@ void explodeStdVless(std::string vless, Proxy &node)
     if(regGetMatch(vless, stdvless_matcher, 5, 0, &id, &add, &port, &addition))
         return;
 
-    flow = getUrlArg(addition,"flow")
-    host = getUrlArg(addition,"sni")
-    net = getUrlArg(addition,"type")
-    tls = "true"
+    flow = getUrlArg(addition,"flow");
+    host = getUrlArg(addition,"sni");
+    net = getUrlArg(addition,"type");
+    tls = "true";
     scv = getUrlArg(addition, "allowInsecure");
 
     if(remarks.empty())
