@@ -133,11 +133,11 @@ void explodeVless(std::string vless, Proxy &node)
         explodeStdVless(vless, node);
         return;
     }
-    else if(regMatch(vless, "vless://(.*?)\\?(.*)")) //shadowrocket style link
-    {
-        explodeShadowrocket(vless, node);
-        return;
-    }
+//    else if(regMatch(vless, "vless://(.*?)\\?(.*)")) //shadowrocket style link
+//    {
+//        explodeShadowrocket(vless, node);
+//        return;
+//    }
 }
 
 void explodeVmess(std::string vmess, Proxy &node)
@@ -1305,6 +1305,7 @@ void explodeShadowrocket(std::string rocket, Proxy &node)
 
     if(remarks.empty())
         remarks = add + ":" + port;
+
 
     vmessConstruct(node, V2RAY_DEFAULT_GROUP, remarks, add, port, type, id, aid, net, cipher, path, host, "", tls);
 }
