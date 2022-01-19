@@ -1241,7 +1241,6 @@ void explodeStdVless(std::string vless, Proxy &node)
     {
         case "tcp"_hash:
         case "kcp"_hash:
-        case "grpc"_hash:
             type = getUrlArg(addition, "type");
             break;
         case "http"_hash:
@@ -1249,6 +1248,7 @@ void explodeStdVless(std::string vless, Proxy &node)
             host = getUrlArg(addition,"host");
             break;
         case "ws"_hash:
+        case "grpc"_hash:
             host = getUrlArg(addition, "host");
             path = getUrlArg(addition, "path");
             break;
