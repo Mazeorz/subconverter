@@ -1247,6 +1247,7 @@ void explodeStdVless(std::string vless, Proxy &node)
         case "http"_hash:
         case "h2"_hash:
             host = getUrlArg(addition,"host");
+            break;
         case "ws"_hash:
             host = getUrlArg(addition, "host");
             path = getUrlArg(addition, "path");
