@@ -60,6 +60,17 @@ void vmessConstruct(Proxy &node, const std::string &group, const std::string &re
     node.TLSSecure = tls == "tls";
 }
 
+void vlessConstruct(Proxy &node, const std::string &group, const std::string &remarks, const std::string &add, const std::string &port, const std::string &id, const std::string &net, const std::string &host, const std::string &flow, const std::string &tls, tribool scv, tribool udp, tribool tfo,  tribool tls13)
+{
+    commonConstruct(node, ProxyType::Vless, group, remarks, add, port, udp, tfo, scv, tls13);
+    node.UserId = id.empty() ? "00000000-0000-0000-0000-000000000000" : id;
+    node.TransferProtocol = net.empty() ? "tcp" : net;
+    node.Host = host.empty() ? add.data() : trim(host);
+    node.FakeType = type;
+    node.TLSSecure = true;
+    node.Flow = flow;
+}
+
 void ssrConstruct(Proxy &node, const std::string &group, const std::string &remarks, const std::string &server, const std::string &port, const std::string &protocol, const std::string &method, const std::string &obfs, const std::string &password, const std::string &obfsparam, const std::string &protoparam, tribool udp, tribool tfo, tribool scv)
 {
     commonConstruct(node, ProxyType::ShadowsocksR, group, remarks, server, port, udp, tfo, scv, tribool());
@@ -111,6 +122,20 @@ void snellConstruct(Proxy &node, const std::string &group, const std::string &re
     node.Password = password;
     node.OBFS = obfs;
     node.Host = host;
+}
+
+void explodeVless(std::string vless, Proxy &node)
+{
+    if(regMatch(vless, "vless://(.*?)@(.*)"))
+    {
+        explodeStdVless(vless, node);
+        return;
+    }
+    else if(regMatch(vless, "vless://(.*?)\\?(.*)")) //shadowrocket style link
+    {
+        explodeShadowrocket(vless, node);
+        return;
+    }
 }
 
 void explodeVmess(std::string vmess, Proxy &node)
@@ -1145,6 +1170,36 @@ void explodeClash(Node yamlnode, std::vector<Proxy> &nodes)
         node = Proxy();
         index++;
     }
+    return;
+}
+
+void explodeStdVless(std::string vless, Proxy &node)
+{
+    std::string add, port, id, flow, net, path, host, tls, remarks, scv;
+    std::string addition;
+    vless = vless.substr(8);
+    string_size pos;
+
+    pos = vless.rfind("#");
+    if(pos != vless.npos)
+    {
+        remarks = urlDecode(vless.substr(pos + 1));
+        vless.erase(pos);
+    }
+    const std::string stdvless_matcher = R"(^([\da-f]{4}(?:[\da-f]{4}-){4}[\da-f]{12})@(.+):(\d+)(?:\/?\?(.*))?$)";
+    if(regGetMatch(vless, stdvless_matcher, 5, 0, &id, &add, &port, &addition))
+        return;
+
+    flow = getUrlArg(addition,"flow")
+    host = getUrlArg(addition,"sni")
+    net = getUrlArg(addition,"type")
+    tls = "true"
+    scv = getUrlArg(addition, "allowInsecure");
+
+    if(remarks.empty())
+        remarks = add + ":" + port;
+
+    vlessConstruct(node, XRAY_DEFAULT_GROUP, remarks, add, port, id, net, host, flow, tls, scv);
     return;
 }
 
