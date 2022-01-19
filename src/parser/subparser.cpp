@@ -133,7 +133,7 @@ void explodeVless(std::string vless, Proxy &node)
         explodeStdVless(vless, node);
         return;
     }
-    else if(regMatch(vmess, "vless://(.*?)\\?(.*)")) //shadowrocket style link
+    else if(regMatch(vless, "vless://(.*?)\\?(.*)")) //shadowrocket style link
     {
         explodeShadowrocket(vless, node);
         return;
@@ -1236,7 +1236,7 @@ void explodeStdVless(std::string vless, Proxy &node)
     if(regGetMatch(vless, stdvless_matcher, 5, 0, &id, &add, &port, &addition))
         return;
 
-    net = getUrlArg(addition,"type")
+    net = getUrlArg(addition,"type");
     switch(hash_(net))
     {
         case "tcp"_hash:
@@ -1254,7 +1254,7 @@ void explodeStdVless(std::string vless, Proxy &node)
         default:
             return;
     }
-    flow = getUrlArg(addition,"flow")
+    flow = getUrlArg(addition,"flow");
     sni = getUrlArg(addition, "sni");
 
     if(remarks.empty())
