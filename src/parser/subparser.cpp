@@ -65,8 +65,8 @@ void vlessConstruct(Proxy &node, const std::string &group, const std::string &re
     commonConstruct(node, ProxyType::Vless, group, remarks, add, port, udp, tfo, scv, tls13);
     node.UserId = id.empty() ? "00000000-0000-0000-0000-000000000000" : id;
     node.TransferProtocol = net.empty() ? "tcp" : net;
-    node.Flow = flow;
-    node.Sni = sni;
+    node.Flow = flow.empty() ? "" : flow;
+    node.Sni = sni.empty() ? "" : sni;
     node.Host = host.empty() ? add.data() : trim(host);
     node.Path = path.empty() ? "/" : trim(path);
     node.FakeType = type;
@@ -133,7 +133,7 @@ void explodeVless(std::string vless, Proxy &node)
         explodeStdVless(vless, node);
         return;
     }
-    else if(regMatch(vmess, "vmess://(.*?)\\?(.*)")) //shadowrocket style link
+    else if(regMatch(vmess, "vless://(.*?)\\?(.*)")) //shadowrocket style link
     {
         explodeShadowrocket(vless, node);
         return;
@@ -1236,34 +1236,26 @@ void explodeStdVless(std::string vless, Proxy &node)
     if(regGetMatch(vless, stdvless_matcher, 5, 0, &id, &add, &port, &addition))
         return;
 
-    if (net = getUrlArg(addition,"type") != ""){
-        switch(hash_(net))
-        {
-            case "tcp"_hash:
-            case "kcp"_hash:
-            case "grpc"_hash:
-                type = getUrlArg(addition, "type");
-                break;
-            case "http"_hash:
-            case "h2"_hash:
-                host = getUrlArg(addition,"host");
-            case "ws"_hash:
-                host = getUrlArg(addition, "host");
-                path = getUrlArg(addition, "path");
-                break;
-            case "h2"_hash:
-                type = getUrlArg(addition, "security");
-                host = getUrlArg(addition, "type");
-                path = getUrlArg(addition, "key");
-                break;
-            default:
-                return;
-        }
+    net = getUrlArg(addition,"type")
+    switch(hash_(net))
+    {
+        case "tcp"_hash:
+        case "kcp"_hash:
+        case "grpc"_hash:
+            type = getUrlArg(addition, "type");
+            break;
+        case "http"_hash:
+        case "h2"_hash:
+            host = getUrlArg(addition,"host");
+        case "ws"_hash:
+            host = getUrlArg(addition, "host");
+            path = getUrlArg(addition, "path");
+            break;
+        default:
+            return;
     }
-
-    if (flow = getUrlArg(addition,"flow") != ""){
-        sni = getUrlArg(addition, "sni");
-    }
+    flow = getUrlArg(addition,"flow")
+    sni = getUrlArg(addition, "sni");
 
     if(remarks.empty())
         remarks = add + ":" + port;
