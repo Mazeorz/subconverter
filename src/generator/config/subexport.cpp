@@ -292,15 +292,6 @@ void proxyToClash(std::vector<Proxy> &nodes, YAML::Node &yamlnode, const ProxyGr
                 break;
             }
             break;
-        case ProxyType::Vless:
-            singleproxy["type"] = "vless";
-            singleproxy["uuid"] = x.UserId;
-            singleproxy["tls"] = true;
-            singleproxy["flow"] = x.Flow;
-            singleproxy["servername"] = x.Host;
-            if(!scv.is_undef())
-                singleproxy["skip-cert-verify"] = scv.get();
-            break;
         case ProxyType::VMess:
             singleproxy["type"] = "vmess";
             singleproxy["uuid"] = x.UserId;
