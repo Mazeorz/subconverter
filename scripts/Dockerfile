@@ -1,5 +1,5 @@
 FROM alpine:3.13
-LABEL maintainer = "mazeorz.me@gmail.com"
+LABEL maintainer "mazeorz.me@gmail.com"
 ARG THREADS="4"
 ARG SHA=""
 
