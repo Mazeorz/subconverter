@@ -143,7 +143,7 @@ void explodeVless(std::string vless, Proxy &node)
 
 void explodeVmess(std::string vmess, Proxy &node)
 {
-    std::string version, ps, add, port, type, id, aid, net, path, host, tls;
+    std::string version, ps, add, port, type, id, aid, net, sni, path, host, tls;
     Document jsondata;
     std::vector<std::string> vArray;
     if(regMatch(vmess, "vmess://(.*?)@(.*)"))
@@ -1183,7 +1183,7 @@ void explodeClash(Node yamlnode, std::vector<Proxy> &nodes)
 
 void explodeStdVMess(std::string vmess, Proxy &node)
 {
-    std::string add, port, type, id, aid, net, path, host, tls, remarks;
+    std::string add, port, type, id, aid, net, sni, path, host, tls, remarks;
     std::string addition;
     vmess = vmess.substr(8);
     string_size pos;
@@ -1220,8 +1220,9 @@ void explodeStdVMess(std::string vmess, Proxy &node)
 
     if(remarks.empty())
         remarks = add + ":" + port;
+    sni = getUrlArg(addition, "servername");
 
-    vmessConstruct(node, V2RAY_DEFAULT_GROUP, remarks, add, port, type, id, aid, net, "auto", path, host, "", tls);
+    vmessConstruct(node, V2RAY_DEFAULT_GROUP, remarks, add, port, type, id, aid, net, "auto", sni,path, host, "", tls);
     return;
 }
 
