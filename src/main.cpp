@@ -72,6 +72,14 @@ void chkArg(int argc, char *argv[])
             if(i < argc - 1)
                 global.prefPath.assign(argv[++i]);
         }
+        else if(strcmp(argv[i], "-v") == 0 || strcmp(argv[i], "--version") == 0)
+        {
+            if(i < argc - 1)
+            {
+                writeLog(0, "SubConverter " VERSION , LOG_LEVEL_INFO);
+                signal_handler();
+            }
+        }
         else if(strcmp(argv[i], "-g") == 0 || strcmp(argv[i], "--gen") == 0)
         {
             global.generatorMode = true;
