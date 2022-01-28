@@ -168,10 +168,11 @@ int main(int argc, char *argv[])
     SetConsoleTitle("SubConverter " VERSION);
     if(global.versionMode)
     {
-        writeLog(0, "SubConverter " VERSION , LOG_LEVEL_INFO);
+        writeLog(0, "SubConverter VERSION", LOG_LEVEL_INFO);
+        writeLog(0, "SubConverter" VERSION, LOG_LEVEL_INFO);
         exit(0);
     }
-    writeLog(0, "SubConverter " VERSION " starting up..", LOG_LEVEL_INFO);
+    writeLog(0, "SubConverter starting up..", LOG_LEVEL_INFO);
     readConf();
     //vfs::vfs_read("vfs.ini");
     if(!global.updateRulesetOnRequest)
