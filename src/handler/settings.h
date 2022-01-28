@@ -36,6 +36,9 @@ struct Settings
     std::string templatePath = "templates";
     string_map templateVars;
 
+    //show version
+    bool versionMode = false;
+
     //generator settings
     bool generatorMode = false;
     std::string generateProfiles;

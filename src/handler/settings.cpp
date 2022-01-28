@@ -791,7 +791,7 @@ void readTOMLConf(toml::value &root)
 void readConf()
 {
     guarded_mutex guard(gMutexConfigure);
-    //std::cerr<<"Reading preference settings..."<<std::endl;
+    //std::cerr<<"Reading preference settings...\n";
     writeLog(0, "Reading preference settings...", LOG_LEVEL_INFO);
 
     eraseElements(global.excludeRemarks);

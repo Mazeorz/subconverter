@@ -71,7 +71,7 @@ void vlessConstruct(Proxy &node, const std::string &group, const std::string &re
     node.Host = host.empty() ? add.data() : trim(host);
     node.Path = path.empty() ? "/" : trim(path);
     node.FakeType = type;
-    node.TLSSecure = true;
+    node.TLSSecure = tls == "tls";
 }
 
 void ssrConstruct(Proxy &node, const std::string &group, const std::string &remarks, const std::string &server, const std::string &port, const std::string &protocol, const std::string &method, const std::string &obfs, const std::string &password, const std::string &obfsparam, const std::string &protoparam, tribool udp, tribool tfo, tribool scv)
@@ -1222,7 +1222,7 @@ void explodeStdVMess(std::string vmess, Proxy &node)
         remarks = add + ":" + port;
     sni = getUrlArg(addition, "servername");
 
-    vmessConstruct(node, V2RAY_DEFAULT_GROUP, remarks, add, port, type, id, aid, net, "auto", sni,path, host, "", tls);
+    vmessConstruct(node, V2RAY_DEFAULT_GROUP, remarks, add, port, type, id, aid, net, "auto", sni, path, host, "", tls);
     return;
 }
 
@@ -1274,7 +1274,7 @@ void explodeStdVless(std::string vless, Proxy &node)
     if(remarks.empty())
         remarks = add + ":" + port;
 
-    vlessConstruct(node, XRAY_DEFAULT_GROUP, remarks, add, port, id, net, flow, sni, type, path, host, "", tls);
+    vlessConstruct(node, XRAY_DEFAULT_GROUP, remarks, add, port, id, net, flow, sni, type, path, host, tls);
     return;
 }
 

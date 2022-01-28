@@ -74,9 +74,7 @@ void chkArg(int argc, char *argv[])
         }
         else if(strcmp(argv[i], "-v") == 0 || strcmp(argv[i], "--version") == 0)
         {
-            const std::string version = VERSION;
-            writeLog(0, "SubConverter " + version , LOG_LEVEL_INFO);
-            exit(0);
+            global.versionMode = true;
         }
         else if(strcmp(argv[i], "-g") == 0 || strcmp(argv[i], "--gen") == 0)
         {
@@ -146,7 +144,6 @@ int main(int argc, char *argv[])
     }
     chkArg(argc, argv);
     setcd(global.prefPath); //then switch to pref directory
-    writeLog(0, "SubConverter " + std::string(VERSION) +" starting up..", LOG_LEVEL_INFO);
 
 #ifdef _WIN32
     WSADATA wsaData;
@@ -169,6 +166,12 @@ int main(int argc, char *argv[])
     signal(SIGINT, signal_handler);
 
     SetConsoleTitle("SubConverter " VERSION);
+    if(global.versionMode)
+    {
+        writeLog(0, "SubConverter " VERSION , LOG_LEVEL_INFO);
+        exit(0);
+    }
+    writeLog(0, "SubConverter " VERSION " starting up..", LOG_LEVEL_INFO);
     readConf();
     //vfs::vfs_read("vfs.ini");
     if(!global.updateRulesetOnRequest)
