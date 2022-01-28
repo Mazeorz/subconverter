@@ -1243,7 +1243,11 @@ void explodeStdVless(std::string vless, Proxy &node)
     if(regGetMatch(vless, stdvless_matcher, 5, 0, &id, &add, &port, &addition))
         return;
 
-    net = getUrlArg(addition,"type");
+    flow = getUrlArg(addition,"flow");
+    sni = getUrlArg(addition, "sni");
+    net = getUrlArg(addition,"headerType");
+    if(net.empty())
+        net = getUrlArg(addition,"type");
     switch(hash_(net))
     {
         case "tcp"_hash:
@@ -1252,18 +1256,20 @@ void explodeStdVless(std::string vless, Proxy &node)
             break;
         case "http"_hash:
         case "h2"_hash:
-            host = getUrlArg(addition,"host");
-            break;
         case "ws"_hash:
         case "grpc"_hash:
             host = getUrlArg(addition, "host");
             path = getUrlArg(addition, "path");
             break;
+        case "quic"_hash:
+            type = getUrlArg(addition, "security");
+            host = getUrlArg(addition, "type");
+            path = getUrlArg(addition, "key");
+            break;
         default:
             return;
     }
-    flow = getUrlArg(addition,"flow");
-    sni = getUrlArg(addition, "sni");
+
 
     if(remarks.empty())
         remarks = add + ":" + port;

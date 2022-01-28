@@ -74,8 +74,8 @@ void chkArg(int argc, char *argv[])
         }
         else if(strcmp(argv[i], "-v") == 0 || strcmp(argv[i], "--version") == 0)
         {
-            writeLog(0, "SubConverter " VERSION , LOG_LEVEL_INFO);
-//            exit(0);
+            writeLog(0, "SubConverter "+VERSION , LOG_LEVEL_INFO);
+            exit(0);
         }
         else if(strcmp(argv[i], "-g") == 0 || strcmp(argv[i], "--gen") == 0)
         {
@@ -145,7 +145,7 @@ int main(int argc, char *argv[])
     }
     chkArg(argc, argv);
     setcd(global.prefPath); //then switch to pref directory
-    writeLog(0, "SubConverter " VERSION " starting up..", LOG_LEVEL_INFO);
+    writeLog(0, "SubConverter "+ VERSION + " starting up..", LOG_LEVEL_INFO);
 #ifdef _WIN32
     WSADATA wsaData;
     if (WSAStartup(MAKEWORD(1, 1), &wsaData) != 0)
