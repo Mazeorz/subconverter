@@ -77,7 +77,7 @@ void chkArg(int argc, char *argv[])
             if(i < argc - 1)
             {
                 writeLog(0, "SubConverter " VERSION , LOG_LEVEL_INFO);
-                signal_handler();
+                exit(0);
             }
         }
         else if(strcmp(argv[i], "-g") == 0 || strcmp(argv[i], "--gen") == 0)
