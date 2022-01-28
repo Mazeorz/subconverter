@@ -72,10 +72,6 @@ void chkArg(int argc, char *argv[])
             if(i < argc - 1)
                 global.prefPath.assign(argv[++i]);
         }
-        else if(strcmp(argv[i], "-v") == 0 || strcmp(argv[i], "--version") == 0)
-        {
-            global.versionMode = true;
-        }
         else if(strcmp(argv[i], "-g") == 0 || strcmp(argv[i], "--gen") == 0)
         {
             global.generatorMode = true;
@@ -101,13 +97,13 @@ void signal_handler(int sig)
     switch(sig)
     {
 #ifndef _WIN32
-    case SIGHUP:
-    case SIGQUIT:
+        case SIGHUP:
+        case SIGQUIT:
 #endif // _WIN32
-    case SIGTERM:
-    case SIGINT:
-        webServer.stop_web_server();
-        break;
+        case SIGTERM:
+        case SIGINT:
+            webServer.stop_web_server();
+            break;
     }
 }
 
@@ -144,7 +140,7 @@ int main(int argc, char *argv[])
     }
     chkArg(argc, argv);
     setcd(global.prefPath); //then switch to pref directory
-
+    writeLog(0, "SubConverter " VERSION " starting up..", LOG_LEVEL_INFO);
 #ifdef _WIN32
     WSADATA wsaData;
     if (WSAStartup(MAKEWORD(1, 1), &wsaData) != 0)
@@ -166,13 +162,6 @@ int main(int argc, char *argv[])
     signal(SIGINT, signal_handler);
 
     SetConsoleTitle("SubConverter " VERSION);
-    if(global.versionMode)
-    {
-        writeLog(0, "SubConverter VERSION", LOG_LEVEL_INFO);
-        writeLog(0, "SubConverter" VERSION, LOG_LEVEL_INFO);
-        exit(0);
-    }
-    writeLog(0, "SubConverter starting up..", LOG_LEVEL_INFO);
     readConf();
     //vfs::vfs_read("vfs.ini");
     if(!global.updateRulesetOnRequest)
