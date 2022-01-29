@@ -76,6 +76,12 @@ void chkArg(int argc, char *argv[])
         {
             global.generatorMode = true;
         }
+        else if(strcmp(argv[i], "-v") == 0 || strcmp(argv[i], "--version") == 0)
+        {
+            global.logLevel = LOG_LEVEL_INFO;
+            writeLog(0, "SubConverter " VERSION , LOG_LEVEL_INFO);
+            exit(0);
+        }
         else if(strcmp(argv[i], "--artifact") == 0)
         {
             if(i < argc - 1)
