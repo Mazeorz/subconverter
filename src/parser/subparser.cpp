@@ -1228,7 +1228,7 @@ void explodeStdVMess(std::string vmess, Proxy &node)
 
 void explodeStdVless(std::string vless, Proxy &node)
 {
-    std::string add, port, id, net, flow, sni, type, path, host, tls, remarks;
+    std::string add, port, id, net, flow, sni, type, hType, path, host, tls, remarks;
     std::string addition;
     vless = vless.substr(8);
     string_size pos;
@@ -1244,7 +1244,8 @@ void explodeStdVless(std::string vless, Proxy &node)
         return;
 
     tls = getUrlArg(addition,"security");
-    net = getUrlArg(addition,"type");
+    hType = getUrlArg(addition,"headerType");
+    net = !hType.empty() && hType != "none" ? hType : getUrlArg(addition,"type");
 
     switch(hash_(net))
     {
