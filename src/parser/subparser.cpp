@@ -1246,9 +1246,9 @@ void explodeStdVless(std::string vless, Proxy &node)
     tls = getUrlArg(addition,"security");
     flow = getUrlArg(addition,"flow");
     sni = getUrlArg(addition, "sni");
-    net = getUrlArg(addition,"headerType");
-    if(net != "none" || net.empty())
-        net = getUrlArg(addition,"type");
+//    net = getUrlArg(addition,"headerType");
+//    if(net != "none" || net.empty())
+    net = getUrlArg(addition,"type");
     switch(hash_(net))
     {
         case "tcp"_hash:
@@ -1270,7 +1270,6 @@ void explodeStdVless(std::string vless, Proxy &node)
         default:
             return;
     }
-
 
     if(remarks.empty())
         remarks = add + ":" + port;
