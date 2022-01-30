@@ -71,7 +71,7 @@ void vlessConstruct(Proxy &node, const std::string &group, const std::string &re
     node.Host = host.empty() ? add.data() : trim(host);
     node.Path = path.empty() ? "/" : trim(path);
     node.FakeType = type;
-    node.TLSSecure = tls == "tls";
+    node.TLSSecure = tls == "tls" || tls == "xtls";
 }
 
 void ssrConstruct(Proxy &node, const std::string &group, const std::string &remarks, const std::string &server, const std::string &port, const std::string &protocol, const std::string &method, const std::string &obfs, const std::string &password, const std::string &obfsparam, const std::string &protoparam, tribool udp, tribool tfo, tribool scv)
