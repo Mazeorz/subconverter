@@ -51,8 +51,7 @@ void vmessConstruct(Proxy &node, const std::string &group, const std::string &re
     {
         case "grpc"_hash:
             node.GRPCMode = mode;
-            node.GRPCServerName = path.empty() ? "/" : trim(path);
-            urlEncode(urlDecode(node.GRPCServerName));
+            node.GRPCServerName = path.empty() ? "/" : urlEncode(urlDecode(trim(path)));
             break;
         case "quic"_hash:
             node.QUICSecure = host;
@@ -60,7 +59,7 @@ void vmessConstruct(Proxy &node, const std::string &group, const std::string &re
             break;
         default:
             node.Host = host.empty() ? add.data() : trim(host);
-            node.Path = path.empty() ? "/" : trim(path);
+            node.GRPCServerName = path.empty() ? "/" : urlEncode(urlDecode(trim(path)));
             break;
     }
     node.FakeType = type;
