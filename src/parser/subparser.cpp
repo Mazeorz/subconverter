@@ -50,7 +50,7 @@ void vmessConstruct(Proxy &node, const std::string &group, const std::string &re
     switch(hash_(net))
     {
         case "grpc"_hash:
-            node.GRPCMode = mode.empty() ? "gun" : mode;
+            node.GRPCMode = type.empty() ? "gun" : type;
             node.GRPCServerName = path.empty() ? "/" : urlEncode(urlDecode(trim(path)));
             break;
         case "quic"_hash:
