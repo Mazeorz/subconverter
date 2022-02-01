@@ -81,6 +81,8 @@ struct Proxy
 
     String QUICSecure;
     String QUICSecret;
+    String GRPCServerName;
+    String GRPCMode;
 
     tribool UDP;
     tribool TCPFastOpen;

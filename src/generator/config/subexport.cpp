@@ -342,8 +342,9 @@ void proxyToClash(std::vector<Proxy> &nodes, YAML::Node &yamlnode, const ProxyGr
                 break;
             case "grpc"_hash:
                 singleproxy["network"] = x.TransferProtocol;
-                singleproxy["servername"] = x.Host;
-                singleproxy["grpc-opts"]["grpc-service-name"] = x.Path;
+                singleproxy["servername"] = x.Sni;
+                singleproxy["grpc-opts"]["grpc-service-name"] = x.GRPCServerName;
+                singleproxy["grpc-opts"]["grpc-mode"] = x.GRPCMode;
                 break;
             default:
                 continue;
@@ -399,7 +400,8 @@ void proxyToClash(std::vector<Proxy> &nodes, YAML::Node &yamlnode, const ProxyGr
                     break;
                 case "grpc"_hash:
                     singleproxy["network"] = x.TransferProtocol;
-                    singleproxy["grpc-opts"]["grpc-service-name"] = x.Path;
+                    singleproxy["grpc-opts"]["grpc-service-name"] = x.GRPCServerName;
+                    singleproxy["grpc-opts"]["grpc-mode"] = x.GRPCMode;
                     break;
                 default:
                     continue;

@@ -43,33 +43,56 @@ void vmessConstruct(Proxy &node, const std::string &group, const std::string &re
     node.UserId = id.empty() ? "00000000-0000-0000-0000-000000000000" : id;
     node.AlterId = to_int(aid);
     node.EncryptMethod = cipher;
-    node.Sni = sni.empty() ? "" : sni;
-    node.TransferProtocol = net.empty() ? "tcp" : net;
+    node.Sni = sni;
+    node.TransferProtocol = net.empty() ? "tcp" : type=="http" ? "http" : net;
     node.Edge = edge;
 
-    if(net == "quic")
+    switch(hash_(net))
     {
-        node.QUICSecure = host;
-        node.QUICSecret = path;
-    }
-    else
-    {
-        node.Host = host.empty() ? add.data() : trim(host);
-        node.Path = path.empty() ? "/" : trim(path);
+        case "grpc"_hash:
+            node.GRPCServerName = path;
+            node.GRPCMode = mode;
+            break;
+        case "quic"_hash:
+            node.QUICSecure = host;
+            node.QUICSecret = path;
+            break;
+        default:
+            node.Host = host.empty() ? add.data() : trim(host);
+            node.Path = path.empty() ? "/" : trim(path);
+            break;
     }
     node.FakeType = type;
     node.TLSSecure = tls == "tls";
 }
 
-void vlessConstruct(Proxy &node, const std::string &group, const std::string &remarks, const std::string &add, const std::string &port, const std::string &id, const std::string &net, const std::string &flow, const std::string &sni, const std::string &type, const std::string &path, const std::string &host, const std::string &tls, tribool udp, tribool tfo, tribool scv, tribool tls13)
+void vlessConstruct(Proxy &node, const std::string &group, const std::string &remarks, const std::string &add, const std::string &port, const std::string &type, const std::string &id, const std::string &aid, const std::string &net, const std::string &cipher, const std::string &flow, const std::string &sni,  const std::string &mode, const std::string &path, const std::string &host, const std::string &edge, const std::string &tls, tribool udp = tribool(), tribool tfo = tribool(), tribool scv = tribool(), tribool tls13 = tribool())
 {
     commonConstruct(node, ProxyType::Vless, group, remarks, add, port, udp, tfo, scv, tls13);
     node.UserId = id.empty() ? "00000000-0000-0000-0000-000000000000" : id;
-    node.TransferProtocol = net.empty() ? "tcp" : net;
-    node.Flow = flow.empty() ? "" : flow;
-    node.Sni = sni.empty() ? "" : sni;
-    node.Host = host.empty() ? add.data() : trim(host);
-    node.Path = path.empty() ? "/" : trim(path);
+    node.AlterId = to_int(aid);
+    node.EncryptMethod = cipher;
+    node.TransferProtocol = net.empty() ? "tcp" : type=="http" ? "http": net;
+    node.Edge = edge;
+
+    switch(hash_(net))
+    {
+        case "grpc"_hash:
+            node.GRPCServerName = path;
+            node.GRPCMode = mode;
+            break;
+        case "quic"_hash:
+            node.QUICSecure = host;
+            node.QUICSecret = path;
+            break;
+        default:
+            node.Host = host.empty() ? add.data() : trim(host);
+            node.Path = path.empty() ? "/" : trim(path);
+            break;
+    }
+
+    node.Flow = flow;
+    node.Sni = sni;
     node.FakeType = type;
     node.TLSSecure = tls == "tls" || tls == "xtls";
 }
@@ -1228,7 +1251,7 @@ void explodeStdVMess(std::string vmess, Proxy &node)
 
 void explodeStdVless(std::string vless, Proxy &node)
 {
-    std::string add, port, id, net, flow, sni, type, hType, path, host, tls, remarks;
+    std::string add, port, type, id, aid, net, flow, sni, mode, path, host, tls, remarks;
     std::string addition;
     vless = vless.substr(8);
     string_size pos;
@@ -1244,25 +1267,26 @@ void explodeStdVless(std::string vless, Proxy &node)
         return;
 
     tls = getUrlArg(addition,"security");
-    hType = getUrlArg(addition,"headerType");
-    net = !hType.empty() && hType != "none" ? hType : getUrlArg(addition,"type");
+    net = getUrlArg(addition,"type");
 
     switch(hash_(net))
     {
         case "tcp"_hash:
         case "kcp"_hash:
-            type = getUrlArg(addition, "type");
-            break;
-        case "http"_hash:
-        case "h2"_hash:
         case "ws"_hash:
-        case "grpc"_hash:
+        case "h2"_hash:
+            type = getUrlArg(addition, "headerType");
             host = getUrlArg(addition, "host");
             path = getUrlArg(addition, "path");
             break;
+        case "grpc"_hash:
+            type = getUrlArg(addition, "headerType");
+            path = getUrlArg(addition, "serviceName");
+            mode = getUrlArg(addition, "mode");
+            break;
         case "quic"_hash:
-            type = getUrlArg(addition, "security");
-            host = getUrlArg(addition, "type");
+            type = getUrlArg(addition, "headerType");
+            host = getUrlArg(addition, "quicSecurity");
             path = getUrlArg(addition, "key");
             break;
         default:
@@ -1275,7 +1299,7 @@ void explodeStdVless(std::string vless, Proxy &node)
     if(remarks.empty())
         remarks = add + ":" + port;
 
-    vlessConstruct(node, XRAY_DEFAULT_GROUP, remarks, add, port, id, net, flow, sni, type, path, host, tls);
+    vlessConstruct(node, XRAY_DEFAULT_GROUP, remarks, add, port, type, id, aid, net, "auto", flow, sni, mode, path, host, "", tls);
     return;
 }
 
