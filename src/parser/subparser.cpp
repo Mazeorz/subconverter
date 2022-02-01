@@ -37,7 +37,7 @@ void commonConstruct(Proxy &node, ProxyType type, const std::string &group, cons
     node.TLS13 = tls13;
 }
 
-void vmessConstruct(Proxy &node, const std::string &group, const std::string &remarks, const std::string &add, const std::string &port, const std::string &type, const std::string &id, const std::string &aid, const std::string &net, const std::string &cipher, const std::string &sni, const std::string &path, const std::string &host, const std::string &edge, const std::string &tls, tribool udp, tribool tfo, tribool scv, tribool tls13)
+void vmessConstruct(Proxy &node, const std::string &group, const std::string &remarks, const std::string &add, const std::string &port, const std::string &type, const std::string &id, const std::string &aid, const std::string &net, const std::string &cipher, const std::string &sni, const std::string &mode, const std::string &path, const std::string &host, const std::string &edge, const std::string &tls, tribool udp, tribool tfo, tribool scv, tribool tls13)
 {
     commonConstruct(node, ProxyType::VMess, group, remarks, add, port, udp, tfo, scv, tls13);
     node.UserId = id.empty() ? "00000000-0000-0000-0000-000000000000" : id;
@@ -66,7 +66,7 @@ void vmessConstruct(Proxy &node, const std::string &group, const std::string &re
     node.TLSSecure = tls == "tls";
 }
 
-void vlessConstruct(Proxy &node, const std::string &group, const std::string &remarks, const std::string &add, const std::string &port, const std::string &type, const std::string &id, const std::string &aid, const std::string &net, const std::string &cipher, const std::string &flow, const std::string &sni,  const std::string &mode, const std::string &path, const std::string &host, const std::string &edge, const std::string &tls, tribool udp = tribool(), tribool tfo = tribool(), tribool scv = tribool(), tribool tls13 = tribool())
+void vlessConstruct(Proxy &node, const std::string &group, const std::string &remarks, const std::string &add, const std::string &port, const std::string &type, const std::string &id, const std::string &aid, const std::string &net, const std::string &cipher, const std::string &flow, const std::string &sni,  const std::string &mode, const std::string &path, const std::string &host, const std::string &edge, const std::string &tls, tribool udp, tribool tfo, tribool scv, tribool tls13)
 {
     commonConstruct(node, ProxyType::Vless, group, remarks, add, port, udp, tfo, scv, tls13);
     node.UserId = id.empty() ? "00000000-0000-0000-0000-000000000000" : id;
@@ -230,7 +230,7 @@ void explodeVmess(std::string vmess, Proxy &node)
 
     add = trim(add);
 
-    vmessConstruct(node, V2RAY_DEFAULT_GROUP, ps, add, port, type, id, aid, net, "auto", sni, path, host, "", tls);
+    vmessConstruct(node, V2RAY_DEFAULT_GROUP, ps, add, port, type, id, aid, net, "auto", sni, "", path, host, "", tls);
 }
 
 void explodeVmessConf(std::string content, std::vector<Proxy> &nodes)
@@ -309,7 +309,7 @@ void explodeVmessConf(std::string content, std::vector<Proxy> &nodes)
                         }
                     }
                 }
-                vmessConstruct(node, V2RAY_DEFAULT_GROUP, add + ":" + port, add, port, type, id, aid, net, cipher, sni, path, host, edge, tls, udp, tfo, scv);
+                vmessConstruct(node, V2RAY_DEFAULT_GROUP, add + ":" + port, add, port, type, id, aid, net, cipher, sni, "", path, host, edge, tls, udp, tfo, scv);
                 nodes.emplace_back(std::move(node));
             }
             return;
@@ -362,7 +362,7 @@ void explodeVmessConf(std::string content, std::vector<Proxy> &nodes)
             json["vmess"][i]["streamSecurity"] >> tls;
             json["vmess"][i]["security"] >> cipher;
             json["vmess"][i]["servername"] >> sni;
-            vmessConstruct(node, V2RAY_DEFAULT_GROUP, ps, add, port, type, id, aid, net, cipher, sni, path, host, "", tls, udp, tfo, scv);
+            vmessConstruct(node, V2RAY_DEFAULT_GROUP, ps, add, port, type, id, aid, net, cipher, sni, "", path, host, "", tls, udp, tfo, scv);
             break;
         case 3: //ss config
             json["vmess"][i]["id"] >> id;
@@ -884,7 +884,7 @@ void explodeQuan(const std::string &quan, Proxy &node)
         if(path.empty())
             path = "/";
 
-        vmessConstruct(node, group, ps, add, port, type, id, aid, net, cipher, sni, path, host, edge, tls);
+        vmessConstruct(node, group, ps, add, port, type, id, aid, net, cipher, sni, "", path, host, edge, tls);
     }
 }
 
@@ -953,7 +953,7 @@ void explodeNetch(std::string netch, Proxy &node)
         tls = GetMember(json, "TLSSecure");
         if(group.empty())
             group = V2RAY_DEFAULT_GROUP;
-        vmessConstruct(node, group, remark, address, port, faketype, id, aid, transprot, method, sni, path, host, edge, tls, udp, tfo, scv);
+        vmessConstruct(node, group, remark, address, port, faketype, id, aid, transprot, method, sni,"", path, host, edge, tls, udp, tfo, scv);
         break;
     case "Socks5"_hash:
         username = GetMember(json, "Username");
@@ -1055,7 +1055,7 @@ void explodeClash(Node yamlnode, std::vector<Proxy> &nodes)
             }
             tls = safe_as<std::string>(singleproxy["tls"]) == "true" ? "tls" : "";
 
-            vmessConstruct(node, group, ps, server, port, "", id, aid, net, cipher, sni, path, host, edge, tls, udp, tfo, scv);
+            vmessConstruct(node, group, ps, server, port, "", id, aid, net, cipher, sni,"", path, host, edge, tls, udp, tfo, scv);
             break;
         case "ss"_hash:
             group = SS_DEFAULT_GROUP;
@@ -1245,7 +1245,7 @@ void explodeStdVMess(std::string vmess, Proxy &node)
         remarks = add + ":" + port;
     sni = getUrlArg(addition, "servername");
 
-    vmessConstruct(node, V2RAY_DEFAULT_GROUP, remarks, add, port, type, id, aid, net, "auto", sni, path, host, "", tls);
+    vmessConstruct(node, V2RAY_DEFAULT_GROUP, remarks, add, port, type, id, aid, net, "auto", sni, "", path, host, "", tls);
     return;
 }
 
@@ -1345,7 +1345,7 @@ void explodeShadowrocket(std::string rocket, Proxy &node)
         remarks = add + ":" + port;
 
 
-    vmessConstruct(node, V2RAY_DEFAULT_GROUP, remarks, add, port, type, id, aid, net, cipher, sni, path, host, "", tls);
+    vmessConstruct(node, V2RAY_DEFAULT_GROUP, remarks, add, port, type, id, aid, net, cipher, sni, "", path, host, "", tls);
 }
 
 void explodeKitsunebi(std::string kit, Proxy &node)
@@ -1383,7 +1383,7 @@ void explodeKitsunebi(std::string kit, Proxy &node)
     if(remarks.empty())
         remarks = add + ":" + port;
 
-    vmessConstruct(node, V2RAY_DEFAULT_GROUP, remarks, add, port, type, id, aid, net, cipher, sni, path, host, "", tls);
+    vmessConstruct(node, V2RAY_DEFAULT_GROUP, remarks, add, port, type, id, aid, net, cipher, sni, "", path, host, "", tls);
 }
 
 bool explodeSurge(std::string surge, std::vector<Proxy> &nodes)
@@ -1646,7 +1646,7 @@ bool explodeSurge(std::string surge, std::vector<Proxy> &nodes)
             if(host.empty() && !isIPv4(server) && !isIPv6(server))
                 host = server;
 
-            vmessConstruct(node, V2RAY_DEFAULT_GROUP, remarks, server, port, "", id, "0", net, method, sni, path, host, edge, tls, udp, tfo, scv, tls13);
+            vmessConstruct(node, V2RAY_DEFAULT_GROUP, remarks, server, port, "", id, "0", net, method, sni, "", path, host, edge, tls, udp, tfo, scv, tls13);
             break;
         case "http"_hash: //http proxy
             server = trim(configs[1]);
@@ -1929,7 +1929,7 @@ bool explodeSurge(std::string surge, std::vector<Proxy> &nodes)
                 if(host.empty() && !isIPv4(server) && !isIPv6(server))
                     host = server;
 
-                vmessConstruct(node, V2RAY_DEFAULT_GROUP, remarks, server, port, "", id, "0", net, method, sni, path, host, "", tls, udp, tfo, scv, tls13);
+                vmessConstruct(node, V2RAY_DEFAULT_GROUP, remarks, server, port, "", id, "0", net, method, sni, "", path, host, "", tls, udp, tfo, scv, tls13);
                 break;
             case "trojan"_hash: //quantumult x style trojan link
                 server = trim(configs[0].substr(0, configs[0].rfind(":")));
