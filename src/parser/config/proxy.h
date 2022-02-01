@@ -74,6 +74,7 @@ struct Proxy
     bool TLSSecure = false;
 
     String Flow;
+    bool FlowShow = false;
     String Sni;
     String Host;
     String Path;
