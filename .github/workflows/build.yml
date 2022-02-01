@@ -28,6 +28,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
         with:
+          tag_name: Alpha
           files: subconverter_linux32.tar.gz
           release: true
 
@@ -53,6 +54,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
         with:
+          tag_name: Alpha
           files: subconverter_linux64.tar.gz
           release: true
 
@@ -80,6 +82,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
         with:
+          tag_name: Alpha
           files: subconverter_armhf.tar.gz
           release: true
 
@@ -107,6 +110,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
         with:
+          tag_name: Alpha
           files: subconverter_aarch64.tar.gz
           release: true
 
@@ -132,6 +136,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
         with:
+          tag_name: Alpha
           files: subconverter_darwin64.tar.gz
           release: true
 
@@ -169,6 +174,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
         with:
+          tag_name: Alpha
           release: true
           files: subconverter_win64.7z
 
@@ -207,5 +213,6 @@ jobs:
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
         with:
+          tag_name: Alpha
           release: true
           files: subconverter_win32.7z
