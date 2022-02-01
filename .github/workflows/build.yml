@@ -169,8 +169,10 @@ jobs:
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
         with:
+#          tag_name: release
+#          release: true
           files: subconverter_win64.7z
-          draft: true
+
 
 #  windows32_build:
 #    name: Windows x86 Build

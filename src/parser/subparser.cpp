@@ -52,6 +52,7 @@ void vmessConstruct(Proxy &node, const std::string &group, const std::string &re
         case "grpc"_hash:
             node.GRPCMode = mode;
             node.GRPCServerName = path.empty() ? "/" : trim(path);
+            urlEncode(urlDecode(node.GRPCServerName));
             break;
         case "quic"_hash:
             node.QUICSecure = host;
@@ -79,7 +80,8 @@ void vlessConstruct(Proxy &node, const std::string &group, const std::string &re
     {
         case "grpc"_hash:
             node.GRPCMode = mode;
-            node.GRPCServerName = path.empty() ? "/" : replaceAllDistinct(trim(path),"/","%2F");
+            node.GRPCServerName = path.empty() ? "/" : trim(path);
+            urlEncode(urlDecode(node.GRPCServerName));
             break;
         case "quic"_hash:
             node.QUICSecure = host;
