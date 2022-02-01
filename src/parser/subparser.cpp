@@ -50,12 +50,12 @@ void vmessConstruct(Proxy &node, const std::string &group, const std::string &re
     switch(hash_(net))
     {
         case "grpc"_hash:
-            node.GRPCServerName = path;
             node.GRPCMode = mode;
+            node.GRPCServerName = path.empty() ? "/" : trim(path);
             break;
         case "quic"_hash:
             node.QUICSecure = host;
-            node.QUICSecret = path;
+            node.QUICSecret = path.empty() ? "/" : trim(path);
             break;
         default:
             node.Host = host.empty() ? add.data() : trim(host);
@@ -78,12 +78,12 @@ void vlessConstruct(Proxy &node, const std::string &group, const std::string &re
     switch(hash_(net))
     {
         case "grpc"_hash:
-            node.GRPCServerName = path;
             node.GRPCMode = mode;
+            node.GRPCServerName = path.empty() ? "/" : trim(path);
             break;
         case "quic"_hash:
             node.QUICSecure = host;
-            node.QUICSecret = path;
+            node.QUICSecret = path.empty() ? "/" : trim(path);
             break;
         default:
             node.Host = host.empty() ? add.data() : trim(host);
