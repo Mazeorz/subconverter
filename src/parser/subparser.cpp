@@ -790,7 +790,7 @@ void explodeHTTPSub(std::string link, Proxy &node)
 void explodeTrojan(std::string trojan, Proxy &node)
 {
     std::string server, port, psk, addition, group, remark, host, path, network, type;
-    tribool tfo, scv, match;
+    tribool tfo, scv;
     trojan.erase(0, 9);
     string_size pos = trojan.rfind("#");
 
@@ -2205,7 +2205,7 @@ void explode(const std::string &link, Proxy &node)
         explodeSSR(link, node);
     else if(strFind(link, "vmess://") || strFind(link, "vmess1://"))
         explodeVmess(link, node);
-    else if(strFind(link, "vless://") c))
+    else if(strFind(link, "vless://") || strFind(link, "vless1://"))
         explodeVless(link, node);
     else if(strFind(link, "ss://"))
         explodeSS(link, node);
