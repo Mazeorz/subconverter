@@ -1192,6 +1192,7 @@ void explodeClash(Node yamlnode, std::vector<Proxy> &nodes)
             switch(hash_(net))
             {
             case "grpc"_hash:
+                singleproxy["grpc-opts"]["grpc-mode"] >>= type;
                 singleproxy["grpc-opts"]["grpc-service-name"] >>= path;
                 break;
             case "ws"_hash:
@@ -1203,7 +1204,7 @@ void explodeClash(Node yamlnode, std::vector<Proxy> &nodes)
                 break;
             }
 
-            trojanConstruct(node, group, ps, server, port, password, net, host, path, true, udp, tfo, scv);
+            trojanConstruct(node, group, ps, server, port, password, net, type,host, path, true, udp, tfo, scv);
             break;
         case "snell"_hash:
             group = SNELL_DEFAULT_GROUP;
