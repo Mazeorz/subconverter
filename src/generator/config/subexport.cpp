@@ -356,13 +356,13 @@ void proxyToClash(std::vector<Proxy> &nodes, YAML::Node &yamlnode, const ProxyGr
             singleproxy["tls"] = x.TLSSecure;
             if (!x.Flow.empty())
                 singleproxy["flow"] = x.Flow;
-            if (!x.Sni.empty())
-                singleproxy["servername"] = x.Sni;
             if(!scv.is_undef())
                 singleproxy["skip-cert-verify"] = scv.get();
             switch(hash_(x.TransferProtocol))
             {
                 case "tcp"_hash:
+                    if(!x.Host.empty())
+                        singleproxy["servername"] = x.Host;
                     break;
                 case "ws"_hash:
                     singleproxy["network"] = x.TransferProtocol;
@@ -400,6 +400,7 @@ void proxyToClash(std::vector<Proxy> &nodes, YAML::Node &yamlnode, const ProxyGr
                     break;
                 case "grpc"_hash:
                     singleproxy["network"] = x.TransferProtocol;
+                    singleproxy["servername"] = x.Host;
                     singleproxy["grpc-opts"]["grpc-mode"] = x.GRPCMode;
                     singleproxy["grpc-opts"]["grpc-service-name"] = x.GRPCServerName;
                     break;
@@ -467,8 +468,7 @@ void proxyToClash(std::vector<Proxy> &nodes, YAML::Node &yamlnode, const ProxyGr
         case ProxyType::Trojan:
             singleproxy["type"] = "trojan";
             singleproxy["password"] = x.Password;
-            if(!x.Host.empty())
-                singleproxy["sni"] = x.Host;
+            singleproxy["sni"] = x.Host;
             if(std::all_of(x.Password.begin(), x.Password.end(), ::isdigit) && !x.Password.empty())
                 singleproxy["password"].SetTag("str");
             if(!scv.is_undef())
@@ -484,8 +484,7 @@ void proxyToClash(std::vector<Proxy> &nodes, YAML::Node &yamlnode, const ProxyGr
                 break;
             case "ws"_hash:
                 singleproxy["ws-opts"]["path"] = x.Path;
-                if(!x.Host.empty())
-                    singleproxy["ws-opts"]["headers"]["Host"] = x.Host;
+                singleproxy["ws-opts"]["headers"]["Host"] = x.Host;
                 break;
             }
             break;
