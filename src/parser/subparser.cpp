@@ -131,17 +131,18 @@ void httpConstruct(Proxy &node, const std::string &group, const std::string &rem
     node.TLSSecure = tls;
 }
 
-void trojanConstruct(Proxy &node, const std::string &group, const std::string &remarks, const std::string &server, const std::string &port, const std::string &password, const std::string &network, const std::string &type, const std::string &host, const std::string &path, bool tlssecure, tribool udp, tribool tfo, tribool scv, tribool tls13)
+void trojanConstruct(Proxy &node, const std::string &group, const std::string &remarks, const std::string &server, const std::string &port, const std::string &password, const std::string &network, const std::string &mode, const std::string &host, const std::string &path, bool tlssecure, tribool udp, tribool tfo, tribool scv, tribool tls13)
 {
     commonConstruct(node, ProxyType::Trojan, group, remarks, server, port, udp, tfo, scv, tls13);
     node.Password = password;
     node.TLSSecure = tlssecure;
     node.TransferProtocol = network.empty() ? "tcp" : network;
-    switch(hash_(network))
+	
+	switch(hash_(network))
     {
         case "grpc"_hash:
             node.Host = host.empty() ? server.data() : trim(host);
-            node.GRPCMode = type.empty() ? "gun" : type;
+            node.GRPCMode = mode.empty() ? "gun" : mode;
             node.GRPCServerName = path.empty() ? "/" : urlEncode(urlDecode(trim(path)));
             break;
         default:
@@ -788,9 +789,9 @@ void explodeHTTPSub(std::string link, Proxy &node)
 
 void explodeTrojan(std::string trojan, Proxy &node)
 {
-    std::string server, port, psk, addition, group, remark, host, path, network, type;
+    std::string server, port, psk, addition, group, remark, host, path, network, mode;
     tribool tfo, scv;
-    trojan.erase(0, 9);
+    trojan.erase(0, trojan.find("://") + 3);
     string_size pos = trojan.rfind("#");
 
     if(pos != trojan.npos)
@@ -811,7 +812,7 @@ void explodeTrojan(std::string trojan, Proxy &node)
         return;
 
     network = getUrlArg(addition,"type");
-    host = getUrlArg(addition, strFind(addition,"sni") ? "sni" : strFind(addition,"host") ? "host" : "peer") ;
+    host = getUrlArg(addition, strFind(addition,"sni") ? "sni" : strFind(addition,"host") ? "host" : "peer");
     tfo = getUrlArg(addition, "tfo");
     scv = getUrlArg(addition, "allowInsecure");
     group = urlDecode(getUrlArg(addition, "group"));
@@ -821,10 +822,10 @@ void explodeTrojan(std::string trojan, Proxy &node)
         case "tcp"_hash:
             break;
         case "ws"_hash:
-            path = getUrlArg(addition, "path");
+            path = urlDecode(getUrlArg(addition, "path"));
             break;
         case "grpc"_hash:
-            type = getUrlArg(addition, "mode");
+            mode = getUrlArg(addition, "mode");
             path = getUrlArg(addition, "serviceName");
             break;
         default:
@@ -837,7 +838,7 @@ void explodeTrojan(std::string trojan, Proxy &node)
     if(group.empty())
         group = TROJAN_DEFAULT_GROUP;
 
-    trojanConstruct(node, group, remark, server, port, psk, network, type, host, path, true, tribool(), tfo, scv);
+    trojanConstruct(node, group, remark, server, port, psk, network, mode, host, path, true, tribool(), tfo, scv);
 }
 
 void explodeQuan(const std::string &quan, Proxy &node)
