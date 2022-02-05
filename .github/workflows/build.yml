@@ -1,6 +1,8 @@
 name: GitHub CI
 on:
-    workflow_dispatch:
+  push:
+    types: [opened, synchronize]
+    branches: [test]
 
 concurrency:
   group: ${{ github.ref }}-${{ github.workflow }}
