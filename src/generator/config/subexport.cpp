@@ -354,9 +354,9 @@ void proxyToClash(std::vector<Proxy> &nodes, YAML::Node &yamlnode, const ProxyGr
             singleproxy["type"] = "vless";
             singleproxy["uuid"] = x.UserId;
             singleproxy["tls"] = x.TLSSecure;
-			if(!x.Host.empty())
+	    if(!x.Host.empty())
                 singleproxy["servername"] = x.Host;
-			if (!x.Flow.empty())
+	    if (!x.Flow.empty())
                 singleproxy["flow"] = x.Flow;
             if(!scv.is_undef())
                 singleproxy["skip-cert-verify"] = scv.get();
@@ -469,15 +469,15 @@ void proxyToClash(std::vector<Proxy> &nodes, YAML::Node &yamlnode, const ProxyGr
             singleproxy["password"] = x.Password;
             if (!x.Flow.empty())
                 singleproxy["flow"] = x.Flow;
-			if(!x.Host.empty())
+	    if(!x.Host.empty())
                 singleproxy["sni"] = x.Host;
             if(std::all_of(x.Password.begin(), x.Password.end(), ::isdigit) && !x.Password.empty())
                 singleproxy["password"].SetTag("str");
             if(!scv.is_undef())
                 singleproxy["skip-cert-verify"] = scv.get();
             
-			switch(hash_(x.TransferProtocol))
-			{
+	    switch(hash_(x.TransferProtocol))
+	    {
             case "tcp"_hash:
                 break;
             case "grpc"_hash:
@@ -486,7 +486,7 @@ void proxyToClash(std::vector<Proxy> &nodes, YAML::Node &yamlnode, const ProxyGr
                 singleproxy["grpc-opts"]["grpc-service-name"] = x.GRPCServiceName;
                 break;
             case "ws"_hash:
-				singleproxy["network"] = x.TransferProtocol;
+		singleproxy["network"] = x.TransferProtocol;
                 singleproxy["ws-opts"]["path"] = x.Path;
                 singleproxy["ws-opts"]["headers"]["Host"] = x.Host;
                 break;
