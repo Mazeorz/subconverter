@@ -46,7 +46,7 @@ void vmessConstruct(Proxy &node, const std::string &group, const std::string &re
     node.Sni = sni;
     node.TransferProtocol = net.empty() ? "tcp" : type=="http" ? "http" : net;
     node.Edge = edge;
-    node.FakeType = type;
+	node.FakeType = type;
     node.TLSSecure = tls == "tls";
 
     switch(hash_(net))
@@ -74,7 +74,7 @@ void vlessConstruct(Proxy &node, const std::string &group, const std::string &re
     node.EncryptMethod = cipher;
     node.TransferProtocol = net.empty() ? "tcp" : type=="http" ? "http": net;
     node.Edge = edge;
-    node.Flow = flow;
+	node.Flow = flow;
     node.FakeType = type;
     node.TLSSecure = tls == "tls" || tls == "xtls";
 
@@ -139,9 +139,9 @@ void trojanConstruct(Proxy &node, const std::string &group, const std::string &r
     node.TLSSecure = tls == "tls" || tls == "xtls";
     node.TransferProtocol = network.empty() ? "tcp" : network;
     node.Path = path;
-    node.Flow = flow;
-    node.GRPCMode = mode.empty() ? "gun" : mode;
-    node.GRPCServiceName = path.empty() ? "/" : urlEncode(urlDecode(trim(path)));
+	node.Flow = flow;
+	node.GRPCMode = mode.empty() ? "gun" : mode;
+	node.GRPCServiceName = path.empty() ? "/" : urlEncode(urlDecode(trim(path)));
 }
 
 void snellConstruct(Proxy &node, const std::string &group, const std::string &remarks, const std::string &server, const std::string &port, const std::string &password, const std::string &obfs, const std::string &host, tribool udp, tribool tfo, tribool scv)
@@ -793,29 +793,29 @@ void explodeTrojan(std::string trojan, Proxy &node)
         trojan.erase(pos);
     }
 
-    if(regGetMatch(trojan, "(.*?)@(.*):(.*)", 4, 0, &psk, &server, &port))
+	if(regGetMatch(trojan, "(.*?)@(.*):(.*)", 4, 0, &psk, &server, &port))
         return;
-    if(port == "0")
+	if(port == "0")
         return;
 	
-    host = getUrlArg(addition, strFind(addition,"sni") ? "sni" : strFind(addition,"host") ? "host" : "peer");
+	host = getUrlArg(addition, strFind(addition,"sni") ? "sni" : strFind(addition,"host") ? "host" : "peer");
     tfo = getUrlArg(addition, "tfo");
     scv = getUrlArg(addition, "allowInsecure");
     group = urlDecode(getUrlArg(addition, "group"));
-    tls = getUrlArg(addition,"security");
-    flow = getUrlArg(addition,"flow");
+	tls = getUrlArg(addition,"security");
+	flow = getUrlArg(addition,"flow");
 	
-    //Case WS
-    if(getUrlArg(addition, "type") == "ws")
+	//Case WS
+	if(getUrlArg(addition, "type") == "ws")
     {
         path = urlDecode(getUrlArg(addition, "path"));
         network = "ws";
     }
-    //Case GRPC
-    if(getUrlArg(addition, "type") == "grpc")
+	//Case GRPC
+	if(getUrlArg(addition, "type") == "grpc")
     {
         mode = getUrlArg(addition,"mode");
-	path = getUrlArg(addition, "serviceName");
+		path = getUrlArg(addition, "serviceName");
         network = "grpc";
     }
 
@@ -1004,7 +1004,7 @@ void explodeClash(Node yamlnode, std::vector<Proxy> &nodes)
     std::string plugin, pluginopts, pluginopts_mode, pluginopts_host, pluginopts_mux; //ss
     std::string protocol, protoparam, obfs, obfsparam; //ssr
     std::string user; //socks
-    std::string flow, mode;
+	std::string flow, mode;
     tribool udp, tfo, scv;
     Proxy node;
     Node singleproxy;
@@ -1176,13 +1176,13 @@ void explodeClash(Node yamlnode, std::vector<Proxy> &nodes)
         case "trojan"_hash:
             group = TROJAN_DEFAULT_GROUP;
             singleproxy["password"] >>= password;
-            singleproxy["sni"] >>= sni;
+            singleproxy["sni"] >>= host;
             singleproxy["network"] >>= net;
-	    singleproxy["flow"] >>= flow;
+			singleproxy["flow"] >>= flow;
             switch(hash_(net))
             {
             case "grpc"_hash:
-		singleproxy["grpc-opts"]["grpc-mode"] >>= mode;
+				singleproxy["grpc-opts"]["grpc-mode"] >>= mode;
                 singleproxy["grpc-opts"]["grpc-service-name"] >>= path;
                 break;
             case "ws"_hash:
@@ -1233,9 +1233,9 @@ void explodeStdVMess(std::string vmess, Proxy &node)
     if(regGetMatch(vmess, stdvmess_matcher, 8, 0, &net, &tls, &id, &aid, &add, &port, &addition))
         return;
 	
-    sni = getUrlArg(addition, "servername");
+	sni = getUrlArg(addition, "servername");
 	
-    switch(hash_(net))
+	switch(hash_(net))
     {
     case "tcp"_hash:
     case "kcp"_hash:
@@ -1279,27 +1279,27 @@ void explodeStdVless(std::string vless, Proxy &node)
     if(regGetMatch(vless, stdvless_matcher, 5, 0, &id, &add, &port, &addition))
         return;
 	
-    tls = getUrlArg(addition,"security");
+	tls = getUrlArg(addition,"security");
     net = getUrlArg(addition,"type");
-    flow = getUrlArg(addition,"flow");
+	flow = getUrlArg(addition,"flow");
 	
-    switch(hash_(net))
+	switch(hash_(net))
     {
         case "tcp"_hash:
         case "ws"_hash:
         case "h2"_hash:
             type = getUrlArg(addition, "headerType");
-            host = getUrlArg(addition, strFind(addition,"sni") ? "sni" : "host") ;
+			host = getUrlArg(addition, strFind(addition,"sni") ? "sni" : "host");
             path = getUrlArg(addition, "path");
             break;
         case "grpc"_hash:
-            host = getUrlArg(addition, "sni");
+			host = getUrlArg(addition, "sni");
             path = getUrlArg(addition, "serviceName");
             mode = getUrlArg(addition, "mode");
             break;
         case "quic"_hash:
             type = getUrlArg(addition, "headerType");
-            host = getUrlArg(addition, strFind(addition,"sni") ? "sni" : "quicSecurity" ) ;
+            host = getUrlArg(addition, strFind(addition,"sni") ? "sni" : "quicSecurity");
             path = getUrlArg(addition, "key");
             break;
         default:
