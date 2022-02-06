@@ -46,7 +46,7 @@ void vmessConstruct(Proxy &node, const std::string &group, const std::string &re
     node.Sni = sni;
     node.TransferProtocol = net.empty() ? "tcp" : type=="http" ? "http" : net;
     node.Edge = edge;
-	node.FakeType = type;
+    node.FakeType = type;
     node.TLSSecure = tls == "tls";
 
     switch(hash_(net))
@@ -783,8 +783,8 @@ void explodeTrojan(std::string trojan, Proxy &node)
 
     if(pos != trojan.npos)
     {
-        remark = urlDecode(trojan.substr(pos + 1));
-        trojan.erase(pos);
+		remark = urlDecode(trojan.substr(pos + 1));
+		trojan.erase(pos);
     }
     pos = trojan.find("?");
     if(pos != trojan.npos)
@@ -794,33 +794,33 @@ void explodeTrojan(std::string trojan, Proxy &node)
     }
 
 	if(regGetMatch(trojan, "(.*?)@(.*):(.*)", 4, 0, &psk, &server, &port))
-        return;
+		return;
 	if(port == "0")
-        return;
+		return;
 	
 	host = getUrlArg(addition, strFind(addition,"sni") ? "sni" : strFind(addition,"host") ? "host" : "peer");
-    tfo = getUrlArg(addition, "tfo");
-    scv = getUrlArg(addition, "allowInsecure");
-    group = urlDecode(getUrlArg(addition, "group"));
+	tfo = getUrlArg(addition, "tfo");
+	scv = getUrlArg(addition, "allowInsecure");
+	group = urlDecode(getUrlArg(addition, "group"));
 	tls = getUrlArg(addition,"security");
 	flow = getUrlArg(addition,"flow");
 	
 	//Case WS
 	if(getUrlArg(addition, "type") == "ws")
     {
-        path = urlDecode(getUrlArg(addition, "path"));
-        network = "ws";
+		path = urlDecode(getUrlArg(addition, "path"));
+		network = "ws";
     }
 	//Case GRPC
 	if(getUrlArg(addition, "type") == "grpc")
     {
-        mode = getUrlArg(addition,"mode");
+		mode = getUrlArg(addition,"mode");
 		path = getUrlArg(addition, "serviceName");
-        network = "grpc";
+		network = "grpc";
     }
-
-    if(remark.empty())
-        remark = server + ":" + port;
+	
+	if(remark.empty())
+		remark = server + ":" + port;
 
     if(group.empty())
         group = TROJAN_DEFAULT_GROUP;
@@ -1003,9 +1003,9 @@ void explodeClash(Node yamlnode, std::vector<Proxy> &nodes)
     std::string type = "none", id, aid = "0", net = "tcp", sni, alpn, path, host, edge, tls; //vmess
     std::string plugin, pluginopts, pluginopts_mode, pluginopts_host, pluginopts_mux; //ss
     std::string protocol, protoparam, obfs, obfsparam; //ssr
-    std::string user; //socks
+	std::string user; //socks
 	std::string flow, mode;
-    tribool udp, tfo, scv;
+	tribool udp, tfo, scv;
     Proxy node;
     Node singleproxy;
     uint32_t index = nodes.size();
@@ -1183,7 +1183,7 @@ void explodeClash(Node yamlnode, std::vector<Proxy> &nodes)
             {
             case "grpc"_hash:
 				singleproxy["grpc-opts"]["grpc-mode"] >>= mode;
-                singleproxy["grpc-opts"]["grpc-service-name"] >>= path;
+				singleproxy["grpc-opts"]["grpc-service-name"] >>= path;
                 break;
             case "ws"_hash:
                 singleproxy["ws-opts"]["path"] >>= path;
@@ -1236,7 +1236,7 @@ void explodeStdVMess(std::string vmess, Proxy &node)
 	sni = getUrlArg(addition, "servername");
 	
 	switch(hash_(net))
-    {
+	{
     case "tcp"_hash:
     case "kcp"_hash:
         type = getUrlArg(addition, "type");
@@ -1280,18 +1280,18 @@ void explodeStdVless(std::string vless, Proxy &node)
         return;
 	
 	tls = getUrlArg(addition,"security");
-    net = getUrlArg(addition,"type");
+	net = getUrlArg(addition,"type");
 	flow = getUrlArg(addition,"flow");
 	
 	switch(hash_(net))
-    {
+	{
         case "tcp"_hash:
         case "ws"_hash:
         case "h2"_hash:
-            type = getUrlArg(addition, "headerType");
+			type = getUrlArg(addition, "headerType");
 			host = getUrlArg(addition, strFind(addition,"sni") ? "sni" : "host");
-            path = getUrlArg(addition, "path");
-            break;
+			path = getUrlArg(addition, "path");
+			break;
         case "grpc"_hash:
 			host = getUrlArg(addition, "sni");
             path = getUrlArg(addition, "serviceName");
